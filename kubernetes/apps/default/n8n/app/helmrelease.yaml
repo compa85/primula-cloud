@@ -1,0 +1,72 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: n8n
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: n8n
+  maxHistory: 3
+  install:
+    crds: CreateReplace
+  upgrade:
+    crds: CreateReplace
+  uninstall:
+    keepHistory: false
+  values:
+    image:
+      repository: n8nio/n8n
+      tag: 2.4.6
+    main:
+      secret:
+        n8n:
+          encryption_key:
+            valueFrom:
+              secretKeyRef:
+                name: n8n-secret
+                key: encryption-key
+      config:
+        db:
+          type: postgresdb
+          postgresdb:
+            host: n8n-db-rw
+            user: n8n
+            pool:
+              size: 10
+            ssl:
+              enabled: true
+              reject_Unauthorized: true
+              ca_file: "/home/ssl/certs/postgresql/ca.crt"
+      extraEnv:
+        DB_POSTGRESDB_PASSWORD:
+          valueFrom:
+            secretKeyRef:
+              name: n8n-db-app
+              key: password
+      extraVolumeMounts:
+        - name: n8n-db-ca-cert
+          mountPath: /home/ssl/certs/postgresql
+          readOnly: true
+
+      extraVolumes:
+        - name: n8n-db-ca-cert
+          secret:
+            secretName: n8n-db-ca
+            items:
+              - key: ca.crt
+                path: ca.crt
+    ingress:
+      enabled: true
+      annotations:
+        external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
+        kubernetes.io/ingress.class: traefik-external
+      hosts:
+        - host: n8n.${SECRET_DOMAIN}
+          paths:
+            - path: /
+              pathType: Prefix
+      tls:
+        - hosts:
+            - n8n.${SECRET_DOMAIN}

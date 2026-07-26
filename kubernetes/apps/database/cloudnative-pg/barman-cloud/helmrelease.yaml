@@ -1,0 +1,17 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: barman-cloud
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: cloudnative-pg-barman-cloud
+  interval: 1h
+  maxHistory: 3
+  install:
+    crds: CreateReplace
+  upgrade:
+    crds: CreateReplace
+  uninstall:
+    keepHistory: false

@@ -1,0 +1,22 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: authentik-db
+spec:
+  instances: 1
+  storage:
+    size: 5Gi
+  affinity:
+    enablePodAntiAffinity: true
+    topologyKey: kubernetes.io/hostname
+    podAntiAffinityType: required
+  enableSuperuserAccess: true
+  superuserSecret:
+    name: authentik-db-secret
+  bootstrap:
+    initdb:
+      database: authentik
+      owner: authentik
+  monitoring:
+    enablePodMonitor: false

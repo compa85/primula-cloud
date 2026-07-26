@@ -1,0 +1,85 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: traefik-internal
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: traefik-internal
+  maxHistory: 3
+  install:
+    crds: CreateReplace
+  upgrade:
+    crds: CreateReplace
+  uninstall:
+    keepHistory: false
+  values:
+    deployment:
+      replicas: 3
+    logs:
+      general:
+        level: INFO
+      access:
+        enabled: true
+    env:
+      - name: TZ
+        value: "${TIMEZONE}"
+    global:
+      sendAnonymousUsage: false
+    service:
+      enabled: true
+      type: LoadBalancer
+      annotations:
+        external-dns.alpha.kubernetes.io/hostname: "internal.${SECRET_DOMAIN}"
+        lbipam.cilium.io/ips: 10.10.25.10
+    ingressClass:
+      enabled: true
+      isDefaultClass: false
+      name: traefik-internal
+    ingressRoute:
+      dashboard:
+        enabled: false
+    ports:
+      traefik:
+        expose:
+          default: false
+      web:
+        port: 80
+        http:
+          redirections:
+            entryPoint:
+              to: websecure
+              scheme: https
+              permanent: true
+      websecure:
+        port: 443
+        asDefault: true
+        http:
+          tls:
+            enabled: true
+        http3:
+          enabled: true
+        forwardedHeaders:
+          trustedIPs:
+            - 10.0.0.0/8
+            - 172.16.0.0/12
+            - 192.168.0.0/16
+        proxyProtocol:
+          trustedIPs:
+            - 10.0.0.0/8
+            - 172.16.0.0/12
+            - 192.168.0.0/16
+    providers:
+      kubernetesCRD:
+        enabled: true
+        ingressClass: traefik-internal
+        allowCrossNamespace: true
+        allowExternalNameServices: true
+      kubernetesIngress:
+        enabled: true
+        ingressClass: traefik-internal
+        allowExternalNameServices: true
+        publishedService:
+          enabled: false

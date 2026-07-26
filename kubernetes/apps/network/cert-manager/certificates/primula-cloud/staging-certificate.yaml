@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: primula-cloud-staging
+spec:
+  secretName: primula-cloud-staging-tls
+  issuerRef:
+    name: primula-cloud-staging-issuer
+    kind: ClusterIssuer
+  commonName: "${SECRET_DOMAIN}"
+  dnsNames:
+    - "${SECRET_DOMAIN}"
+    - "*.${SECRET_DOMAIN}"

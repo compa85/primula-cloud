@@ -1,0 +1,22 @@
+# Trash
+.DS_Store
+Thumbs.db
+
+# Secrets
+secrets.env
+.config.env
+.decrypted~*.*
+*.agekey
+*.pub
+*.key
+github-deploy-key*
+
+# Terraform
+.terraform
+
+# Helm
+Chart.lock
+
+# K8S
+kubeconfig
+talosconfig

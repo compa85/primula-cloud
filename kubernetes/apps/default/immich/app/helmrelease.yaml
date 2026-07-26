@@ -1,0 +1,160 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: immich
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: immich
+  interval: 1h
+  maxHistory: 3
+  install:
+    crds: CreateReplace
+  upgrade:
+    crds: CreateReplace
+  uninstall:
+    keepHistory: false
+  values:
+    valkey:
+      enabled: true
+
+    immich:
+      persistence:
+        library:
+          existingClaim: immich-library
+      configuration:
+        server:
+          externalDomain: "https://photos.${SECRET_DOMAIN}"
+        notifications:
+          smtp:
+            enabled: true
+            from: "Immich <noreply@${SECRET_DOMAIN}>"
+            transport:
+              secure: false
+        oauth:
+          enabled: true
+          scope: "openid email profile"
+        trash:
+          enabled: true
+          days: 30
+        machineLearning:
+          clip:
+            modelName: "ViT-SO400M-16-SigLIP2-384__webli"
+          ocr:
+            modelName: "PP-OCRv5_mobile"
+          facialRecognition:
+            modelName: "antelopev2"
+            maxDistance: 0.5
+            minFaces: 10
+            minScore: 0.7
+        storageTemplate:
+          enabled: true
+          template: "{{y}}/{{MM}}/{{filename}}"
+
+    server:
+      enabled: true
+      persistence:
+        external-library:
+          enabled: true
+          type: persistentVolumeClaim
+          existingClaim: immich-external-library
+          globalMounts:
+            - path: /mnt/external
+              readOnly: true
+      controllers:
+        main:
+          containers:
+            main:
+              image:
+                tag: "v2.7.5"
+              env:
+                # Database connection
+                DB_HOSTNAME:
+                  valueFrom:
+                    secretKeyRef:
+                      name: immich-db-app
+                      key: host
+                DB_DATABASE_NAME:
+                  valueFrom:
+                    secretKeyRef:
+                      name: immich-db-app
+                      key: dbname
+                DB_USERNAME:
+                  valueFrom:
+                    secretKeyRef:
+                      name: immich-db-app
+                      key: user
+                DB_PASSWORD:
+                  valueFrom:
+                    secretKeyRef:
+                      name: immich-db-app
+                      key: password
+      ingress:
+        main:
+          enabled: true
+          annotations:
+            external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
+            kubernetes.io/ingress.class: traefik-external
+          hosts:
+            - host: photos.${SECRET_DOMAIN}
+              paths:
+                - path: /
+                  pathType: Prefix
+          tls:
+            - hosts:
+                - photos.${SECRET_DOMAIN}
+
+    machine-learning:
+      enabled: true
+      controllers:
+        main:
+          pod:
+            runtimeClassName: nvidia
+          containers:
+            main:
+              image:
+                repository: ghcr.io/immich-app/immich-machine-learning
+                tag: v3.0.3-cuda
+              env:
+                TRANSFORMERS_CACHE: /cache
+                HF_XET_CACHE: /cache/huggingface-xet
+                MPLCONFIGDIR: /cache/matplotlib-config
+              resources:
+                limits:
+                  nvidia.com/gpu: 1
+      persistence:
+        cache:
+          enabled: true
+          type: persistentVolumeClaim
+          existingClaim: immich-machine-learning-cache
+
+  valuesFrom:
+    - kind: Secret
+      name: &oauth-secret immich-oauth-secret
+      valuesKey: client-id
+      targetPath: immich.configuration.oauth.clientId
+    - kind: Secret
+      name: *oauth-secret
+      valuesKey: client-secret
+      targetPath: immich.configuration.oauth.clientSecret
+    - kind: Secret
+      name: *oauth-secret
+      valuesKey: issuer-url
+      targetPath: immich.configuration.oauth.issuerUrl
+    - kind: Secret
+      name: &smtp-secret immich-smtp-secret
+      valuesKey: host
+      targetPath: immich.configuration.notifications.smtp.transport.host
+    - kind: Secret
+      name: *smtp-secret
+      valuesKey: port
+      targetPath: immich.configuration.notifications.smtp.transport.port
+    - kind: Secret
+      name: *smtp-secret
+      valuesKey: username
+      targetPath: immich.configuration.notifications.smtp.transport.username
+    - kind: Secret
+      name: *smtp-secret
+      valuesKey: password
+      targetPath: immich.configuration.notifications.smtp.transport.password

@@ -1,0 +1,38 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: immich-library
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: nfs
+  volumeName: immich-nfs
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: immich-machine-learning-cache
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: immich-external-library
+spec:
+  accessModes:
+    - ReadOnlyMany
+  storageClassName: nfs
+  volumeName: immich-external-library
+  resources:
+    requests:
+      storage: 1Ti

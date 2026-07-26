@@ -1,0 +1,29 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: immich-db
+spec:
+  instances: 1
+  storage:
+    size: 20Gi
+  imageName: ghcr.io/tensorchord/cloudnative-vectorchord:17.5-0.4.2
+  affinity:
+    enablePodAntiAffinity: true
+    topologyKey: kubernetes.io/hostname
+    podAntiAffinityType: required
+  postgresql:
+    shared_preload_libraries:
+      - "vchord.so"
+  enableSuperuserAccess: true
+  superuserSecret:
+    name: immich-db-secret
+  bootstrap:
+    initdb:
+      database: immich
+      owner: immich
+      postInitApplicationSQL:
+        - CREATE EXTENSION IF NOT EXISTS vchord CASCADE;
+        - CREATE EXTENSION IF NOT EXISTS earthdistance CASCADE;
+  monitoring:
+    enablePodMonitor: false

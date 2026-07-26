@@ -1,0 +1,57 @@
+---
+apiVersion: cilium.io/v2
+kind: CiliumBGPClusterConfig
+metadata:
+  name: cilium-cluster-config
+spec:
+  bgpInstances:
+    - name: "cluster-prod"
+      localASN: 65101
+      peers:
+        - name: "gateway"
+          peerASN: 65100
+          peerAddress: 10.10.25.1
+          peerConfigRef:
+            name: cilium-peer-config
+---
+apiVersion: cilium.io/v2
+kind: CiliumBGPPeerConfig
+metadata:
+  name: cilium-peer-config
+spec:
+  gracefulRestart:
+    enabled: true
+    restartTimeSeconds: 60
+  families:
+    - afi: ipv4
+      safi: unicast
+      advertisements:
+        matchLabels:
+          bgp.cilium.io/advertise: lb-services
+---
+apiVersion: cilium.io/v2
+kind: CiliumBGPAdvertisement
+metadata:
+  name: cilium-advertisement
+  labels:
+    bgp.cilium.io/advertise: lb-services
+spec:
+  advertisements:
+    - advertisementType: Service
+      service:
+        addresses:
+          - LoadBalancerIP
+      selector:
+        matchExpressions:
+          - key: fakeSelector
+            operator: NotIn
+            values:
+              - will-match-and-announce-all-services
+---
+apiVersion: cilium.io/v2
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: cilium-default-pool
+spec:
+  blocks:
+    - cidr: 10.10.25.0/24

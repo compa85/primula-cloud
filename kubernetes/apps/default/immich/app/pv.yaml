@@ -1,0 +1,37 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: immich-nfs
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: nfs
+  persistentVolumeReclaimPolicy: Retain
+  capacity:
+    storage: 10Gi
+  nfs:
+    server: "nas-1.${SECRET_DOMAIN}"
+    path: "/var/nfs/shared/Kubernetes/immich"
+  claimRef:
+    namespace: default
+    name: immich-library
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: immich-external-library
+spec:
+  accessModes:
+    - ReadOnlyMany
+  storageClassName: nfs
+  persistentVolumeReclaimPolicy: Retain
+  capacity:
+    storage: 1Ti
+  mountOptions: [ro]
+  nfs:
+    server: "nas-1.${SECRET_DOMAIN}"
+    path: "/var/nfs/shared/Kubernetes/truenas/Applicazioni/immich/data/library"
+  claimRef:
+    namespace: default
+    name: immich-external-library

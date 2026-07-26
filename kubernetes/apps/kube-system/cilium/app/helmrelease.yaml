@@ -1,0 +1,106 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: cilium
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: cilium
+  maxHistory: 3
+  install:
+    crds: CreateReplace
+  upgrade:
+    crds: CreateReplace
+  uninstall:
+    keepHistory: false
+  values:
+    cluster:
+      id: 1
+      name: prod
+    rollOutCiliumPods: true
+
+    # === Datapath / BPF ===
+    bpf:
+      datapathMode: netkit
+      masquerade: true
+      preallocateMaps: true
+    bpfClockProbe: true
+    cgroup:
+      automount:
+        enabled: false
+      hostRoot: /sys/fs/cgroup
+
+    # === IPAM & Routing ===
+    ipam:
+      mode: kubernetes
+    ipv4NativeRoutingCIDR: 10.42.0.0/16
+    routingMode: native
+    autoDirectNodeRoutes: true
+    endpointRoutes:
+      enabled: true
+    pmtuDiscovery:
+      enabled: true
+
+    # === Kube-proxy replacement ===
+    kubeProxyReplacement: true
+    kubeProxyReplacementHealthzBindAddr: 0.0.0.0:10256
+    k8sServiceHost: 10.10.25.21
+    k8sServicePort: 6443
+    socketLB:
+      enabled: true
+      hostNamespaceOnly: true
+    localRedirectPolicies:
+      enabled: true
+
+    # === Load balancing ===
+    loadBalancer:
+      algorithm: maglev
+      mode: dsr
+
+    # === BGP ===
+    bgpControlPlane:
+      enabled: true
+    
+    # === Operator ===
+    operator:
+      replicas: 2
+      rollOutPods: true
+
+    # === Envoy ===
+    envoy:
+      enabled: false
+    gatewayAPI:
+      enabled: false
+    
+     # === Observability ===
+    hubble:
+      enabled: false
+    prometheus:
+      enabled: false
+
+    # === Security context ===
+    securityContext:
+      capabilities:
+        ciliumAgent:
+          - CHOWN
+          - KILL
+          - NET_ADMIN
+          - NET_RAW
+          - IPC_LOCK
+          - SYS_ADMIN
+          - SYS_RESOURCE
+          - PERFMON
+          - BPF
+          - DAC_OVERRIDE
+          - FOWNER
+          - SETGID
+          - SETUID
+        cleanCiliumState:
+          - NET_ADMIN
+          - SYS_ADMIN
+          - SYS_RESOURCE
+          - PERFMON
+          - BPF
+    
