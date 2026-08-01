@@ -20,6 +20,9 @@ spec:
   uninstall:
     keepHistory: false
   values:
+    defaultSettings:
+      defaultReplicaCount: 2
+      createDefaultDiskLabeledNodes: true
     ingress:
       enabled: true
       annotations:

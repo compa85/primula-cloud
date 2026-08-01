@@ -4,13 +4,16 @@ kind: Cluster
 metadata:
   name: n8n-db
 spec:
-  instances: 1
+  instances: 2
   storage:
+    storageClass: longhorn-cnpg
     size: 2Gi
   affinity:
     enablePodAntiAffinity: true
     topologyKey: kubernetes.io/hostname
     podAntiAffinityType: required
+    nodeSelector:
+      storage: nvme
   enableSuperuserAccess: true
   superuserSecret:
     name: cloudnative-pg-secret
