@@ -67,7 +67,7 @@ spec:
           containers:
             main:
               image:
-                tag: "v2.7.5"
+                tag: "v3.1.0"
               env:
                 # Database connection
                 DB_HOSTNAME:
@@ -116,7 +116,7 @@ spec:
             main:
               image:
                 repository: ghcr.io/immich-app/immich-machine-learning
-                tag: v3.0.3-cuda
+                tag: v3.1.0-cuda
               env:
                 TRANSFORMERS_CACHE: /cache
                 HF_XET_CACHE: /cache/huggingface-xet
@@ -128,7 +128,7 @@ spec:
                 MACHINE_LEARNING_PRELOAD__FACIAL_RECOGNITION__RECOGNITION: antelopev2
                 MACHINE_LEARNING_PRELOAD__OCR__DETECTION: PP-OCRv5_mobile
                 MACHINE_LEARNING_PRELOAD__OCR__RECOGNITION: PP-OCRv5_mobile
-                MACHINE_LEARNING_REQUEST_THREADS: "2"
+                MACHINE_LEARNING_REQUEST_THREADS: "1"
               resources:
                 limits:
                   nvidia.com/gpu: 1
