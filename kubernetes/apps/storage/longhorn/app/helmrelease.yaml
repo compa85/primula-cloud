@@ -21,7 +21,7 @@ spec:
     keepHistory: false
   values:
     defaultSettings:
-      defaultReplicaCount: 2
+      defaultReplicaCount: "2"
       createDefaultDiskLabeledNodes: true
     ingress:
       enabled: true
