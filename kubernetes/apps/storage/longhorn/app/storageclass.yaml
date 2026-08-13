@@ -12,6 +12,7 @@ parameters:
   dataLocality: "strict-local"
   diskSelector: "nvme"
   fsType: "ext4"
+  dataEngine: "v1"
 ---
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
@@ -26,3 +27,4 @@ parameters:
   dataLocality: "best-effort"
   diskSelector: "nvme"
   fsType: "ext4"
+  dataEngine: "v1"
