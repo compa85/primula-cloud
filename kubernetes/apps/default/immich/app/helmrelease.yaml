@@ -40,7 +40,7 @@ spec:
           days: 30
         machineLearning:
           clip:
-            modelName: "ViT-SO400M-16-SigLIP2-384__webli"
+            modelName: "ViT-L-16-SigLIP2-384__webli"
           ocr:
             modelName: "PP-OCRv5_mobile"
           facialRecognition:
@@ -109,6 +109,7 @@ spec:
       enabled: true
       controllers:
         main:
+          strategy: Recreate
           pod:
             runtimeClassName: nvidia
           containers:
@@ -120,6 +121,14 @@ spec:
                 TRANSFORMERS_CACHE: /cache
                 HF_XET_CACHE: /cache/huggingface-xet
                 MPLCONFIGDIR: /cache/matplotlib-config
+                MACHINE_LEARNING_MODEL_TTL: "0"
+                MACHINE_LEARNING_PRELOAD__CLIP__TEXTUAL: ViT-L-16-SigLIP2-384__webli
+                MACHINE_LEARNING_PRELOAD__CLIP__VISUAL: ViT-L-16-SigLIP2-384__webli
+                MACHINE_LEARNING_PRELOAD__FACIAL_RECOGNITION__DETECTION: antelopev2
+                MACHINE_LEARNING_PRELOAD__FACIAL_RECOGNITION__RECOGNITION: antelopev2
+                MACHINE_LEARNING_PRELOAD__OCR__DETECTION: PP-OCRv5_mobile
+                MACHINE_LEARNING_PRELOAD__OCR__RECOGNITION: PP-OCRv5_mobile
+                MACHINE_LEARNING_REQUEST_THREADS: "2"
               resources:
                 limits:
                   nvidia.com/gpu: 1
