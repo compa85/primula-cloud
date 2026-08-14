@@ -46,7 +46,7 @@ spec:
           facialRecognition:
             modelName: "antelopev2"
             maxDistance: 0.5
-            minFaces: 10
+            minFaces: 5
             minScore: 0.7
         storageTemplate:
           enabled: true
@@ -121,13 +121,10 @@ spec:
                 TRANSFORMERS_CACHE: /cache
                 HF_XET_CACHE: /cache/huggingface-xet
                 MPLCONFIGDIR: /cache/matplotlib-config
-                MACHINE_LEARNING_MODEL_TTL: "0"
                 MACHINE_LEARNING_PRELOAD__CLIP__TEXTUAL: ViT-L-16-SigLIP2-384__webli
                 MACHINE_LEARNING_PRELOAD__CLIP__VISUAL: ViT-L-16-SigLIP2-384__webli
                 MACHINE_LEARNING_PRELOAD__FACIAL_RECOGNITION__DETECTION: antelopev2
                 MACHINE_LEARNING_PRELOAD__FACIAL_RECOGNITION__RECOGNITION: antelopev2
-                MACHINE_LEARNING_PRELOAD__OCR__DETECTION: PP-OCRv5_mobile
-                MACHINE_LEARNING_PRELOAD__OCR__RECOGNITION: PP-OCRv5_mobile
                 MACHINE_LEARNING_REQUEST_THREADS: "1"
               resources:
                 limits:
