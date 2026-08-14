@@ -7,3 +7,5 @@ metadata:
 spec:
   defaultCertificate:
     secretName: primula-cloud-production-tls
+  certificates:
+    - secretName: primula-cloud-lan-tls
