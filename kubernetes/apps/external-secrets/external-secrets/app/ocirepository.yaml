@@ -7,7 +7,7 @@ spec:
   interval: 1h
   url: oci://ghcr.io/external-secrets/charts/external-secrets
   ref:
-    tag: 2.4.1
+    tag: 2.9.0
   layerSelector:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
