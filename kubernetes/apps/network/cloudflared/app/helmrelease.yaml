@@ -7,7 +7,7 @@ spec:
   chart:
     spec:
       chart: cloudflared
-      version: 2.2.4
+      version: 2.2.16
       sourceRef:
         kind: HelmRepository
         name: cloudflared
@@ -25,7 +25,7 @@ spec:
       count: 2
     image:
       repository: docker.io/cloudflare/cloudflared
-      tag: 2025.11.1
+      tag: 2026.8.2
     tunnelConfig:
       name: "K3S"
     tunnelSecrets:
