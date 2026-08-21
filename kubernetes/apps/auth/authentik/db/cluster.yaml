@@ -14,12 +14,15 @@ spec:
     podAntiAffinityType: required
     nodeSelector:
       storage: nvme
-  enableSuperuserAccess: true
-  superuserSecret:
-    name: authentik-db-secret
   bootstrap:
     initdb:
       database: authentik
       owner: authentik
   monitoring:
     enablePodMonitor: false
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: authentik
+        serverName: authentik

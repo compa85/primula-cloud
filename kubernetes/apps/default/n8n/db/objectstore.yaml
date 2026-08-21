@@ -1,0 +1,22 @@
+---
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: n8n
+spec:
+  retentionPolicy: "14d"
+  configuration:
+    destinationPath: ${CNPG_BACKUP_DESTINATION}
+    endpointURL: ${CNPG_BACKUP_ENDPOINT}
+    s3Credentials:
+      accessKeyId:
+        name: n8n-db-backup-secret
+        key: access-key-id
+      secretAccessKey:
+        name: n8n-db-backup-secret
+        key: access-secret-key
+    data:
+      compression: gzip
+    wal:
+      compression: gzip
+      maxParallel: 2

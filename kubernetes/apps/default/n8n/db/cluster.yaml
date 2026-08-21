@@ -14,12 +14,15 @@ spec:
     podAntiAffinityType: required
     nodeSelector:
       storage: nvme
-  enableSuperuserAccess: true
-  superuserSecret:
-    name: cloudnative-pg-secret
   bootstrap:
     initdb:
       database: n8n
       owner: n8n
   monitoring:
     enablePodMonitor: false
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: n8n
+        serverName: n8n
