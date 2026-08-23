@@ -7,7 +7,7 @@ metadata:
     kubernetes.io/ingress.class: traefik-external
 spec:
   rules:
-    - host: it-tools.${SECRET_DOMAIN}
+    - host: tools.${SECRET_DOMAIN}
       http:
         paths:
           - path: /
@@ -19,4 +19,4 @@ spec:
                   number: 80
   tls:
     - hosts:
-        - it-tools.${SECRET_DOMAIN}
+        - tools.${SECRET_DOMAIN}
