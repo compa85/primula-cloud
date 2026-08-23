@@ -20,14 +20,19 @@ spec:
       repository: n8nio/n8n
       tag: 2.34.6
     main:
-      secret:
-        n8n:
-          encryption_key:
-            valueFrom:
-              secretKeyRef:
-                name: n8n-secret
-                key: encryption-key
       config:
+        n8n:
+          editor_base_url: "https://n8n.${SECRET_DOMAIN}"
+          email:
+            mode: smtp
+          smtp:
+            sender: "n8n <noreply@${SECRET_DOMAIN}>"
+            ssl: false
+            starttls: true
+        webhook_url: "https://n8n.${SECRET_DOMAIN}"
+        generic:
+          timezone: "${TIMEZONE}"
+        tz: "${TIMEZONE}"
         db:
           type: postgresdb
           postgresdb:
@@ -40,10 +45,35 @@ spec:
               reject_Unauthorized: true
               ca_file: "/home/ssl/certs/postgresql/ca.crt"
       extraEnv:
+        N8N_ENCRYPTION_KEY:
+          valueFrom:
+            secretKeyRef:
+              name: n8n-secret
+              key: encryption-key
         DB_POSTGRESDB_PASSWORD:
           valueFrom:
             secretKeyRef:
               name: n8n-db-app
+              key: password
+        N8N_SMTP_HOST:
+          valueFrom:
+            secretKeyRef:
+              name: &smtp-secret n8n-smtp-secret
+              key: host
+        N8N_SMTP_PORT:
+          valueFrom:
+            secretKeyRef:
+              name: *smtp-secret
+              key: port
+        N8N_SMTP_USER:
+          valueFrom:
+            secretKeyRef:
+              name: *smtp-secret
+              key: username
+        N8N_SMTP_PASS:
+          valueFrom:
+            secretKeyRef:
+              name: *smtp-secret
               key: password
       extraVolumeMounts:
         - name: n8n-db-ca-cert
