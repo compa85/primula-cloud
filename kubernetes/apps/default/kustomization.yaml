@@ -7,5 +7,6 @@ resources:
   - ./immich/ks.yaml
   - ./n8n/ks.yaml
   - ./it-tools/ks.yaml
+  - ./bento-pdf/ks.yaml
 components:
   - ../../components/substitutions
