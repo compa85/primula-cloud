@@ -35,6 +35,8 @@ spec:
         oauth:
           enabled: true
           scope: "openid email profile"
+        passwordLogin:
+          enabled: false
         trash:
           enabled: true
           days: 30
