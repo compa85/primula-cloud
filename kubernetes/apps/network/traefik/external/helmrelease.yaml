@@ -18,11 +18,10 @@ spec:
   values:
     deployment:
       replicas: 3
-    logs:
-      general:
-        level: INFO
-      access:
-        enabled: true
+    log:
+      level: INFO
+    accessLog:
+      enabled: true
     env:
       - name: TZ
         value: "${TIMEZONE}"
@@ -30,7 +29,8 @@ spec:
       sendAnonymousUsage: false
     service:
       enabled: true
-      type: LoadBalancer
+      spec:
+        type: LoadBalancer
       annotations:
         external-dns.alpha.kubernetes.io/hostname: "external.${SECRET_DOMAIN}"
         lbipam.cilium.io/ips: 10.10.25.11
