@@ -7,7 +7,7 @@ spec:
   chart:
     spec:
       chart: authentik
-      version: 2026.5.6
+      version: 2026.8.2
       sourceRef:
         kind: HelmRepository
         name: authentik
@@ -20,6 +20,11 @@ spec:
   uninstall:
     keepHistory: false
   values:
+    authentik:
+      web:
+        base_url: "https://auth.${SECRET_DOMAIN}"
+      email:
+        from: "Authentik <noreply@${SECRET_DOMAIN}>"
     server:
       ingress:
         enabled: true
@@ -36,8 +41,6 @@ spec:
               - auth.${SECRET_DOMAIN}
     postgresql:
       enabled: false
-    email:
-      from: "Authentik <noreply@${SECRET_DOMAIN}>"
 
   valuesFrom:
     - kind: Secret
