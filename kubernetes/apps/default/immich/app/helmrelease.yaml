@@ -34,6 +34,7 @@ spec:
               secure: false
         oauth:
           enabled: true
+          issuerUrl: "https://auth.${SECRET_DOMAIN}/application/o/immich/"
           scope: "openid email profile"
         passwordLogin:
           enabled: false
@@ -153,16 +154,12 @@ spec:
   valuesFrom:
     - kind: Secret
       name: &oauth-secret immich-oauth-secret
-      valuesKey: client-id
+      valuesKey: oidc-client-id
       targetPath: immich.configuration.oauth.clientId
     - kind: Secret
       name: *oauth-secret
-      valuesKey: client-secret
+      valuesKey: oidc-client-secret
       targetPath: immich.configuration.oauth.clientSecret
-    - kind: Secret
-      name: *oauth-secret
-      valuesKey: issuer-url
-      targetPath: immich.configuration.oauth.issuerUrl
     - kind: Secret
       name: &smtp-secret immich-smtp-secret
       valuesKey: host
