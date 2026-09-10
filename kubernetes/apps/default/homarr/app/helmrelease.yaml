@@ -26,10 +26,11 @@ spec:
       NEXTAUTH_URL: "https://dash.${SECRET_DOMAIN}"
       AUTH_TRUST_HOST: "true"
       AUTH_PROVIDERS: "credentials,oidc"
-      AUTH_OIDC_CLIENT_NAME: authentik
+      AUTH_OIDC_CLIENT_NAME: Authentik
       AUTH_OIDC_ISSUER: "https://auth.${SECRET_DOMAIN}/application/o/homarr/"
       AUTH_OIDC_SCOPE_OVERWRITE: "openid email profile groups"
       AUTH_OIDC_GROUPS_ATTRIBUTE: groups
+      AUTH_OIDC_ENABLE_DANGEROUS_CREDENTIALS_LINKING: "true"
     database:
       type: postgresql
     envSecrets:
