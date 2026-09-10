@@ -1,0 +1,70 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: homarr
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: homarr
+  maxHistory: 3
+  install:
+    crds: CreateReplace
+  upgrade:
+    crds: CreateReplace
+  uninstall:
+    keepHistory: false
+  values:
+    image:
+      repository: ghcr.io/homarr-labs/homarr
+      tag: v1.77.0
+    env:
+      TZ: "${TIMEZONE}"
+      LOG_LEVEL: info
+      BASE_URL: "https://dash.${SECRET_DOMAIN}"
+      NEXTAUTH_URL: "https://dash.${SECRET_DOMAIN}"
+      AUTH_TRUST_HOST: "true"
+      AUTH_PROVIDERS: "credentials,oidc"
+      AUTH_OIDC_CLIENT_NAME: authentik
+      AUTH_OIDC_ISSUER: "https://auth.${SECRET_DOMAIN}/application/o/homarr/"
+      AUTH_OIDC_SCOPE_OVERWRITE: "openid email profile groups"
+      AUTH_OIDC_GROUPS_ATTRIBUTE: groups
+      AUTH_OIDC_AUTO_LOGIN: true
+    database:
+      type: postgresql
+    envSecrets:
+      dbCredentials:
+        existingSecret: homarr-db-app
+        dbUrlKey: uri
+      dbEncryption:
+        existingSecret: &secret homarr-secret
+        key: encryption-key
+      authOidcCredentials:
+        existingSecret: *secret
+        oidcClientId: oidc-client-id
+        oidcClientSecret: oidc-client-secret
+    livenessProbe:
+      initialDelaySeconds: 60
+      failureThreshold: 10
+    readinessProbe:
+      initialDelaySeconds: 30
+      failureThreshold: 10
+    resources:
+      requests:
+        cpu: 50m
+        memory: 512Mi
+      limits:
+        memory: 1Gi
+    ingress:
+      enabled: true
+      ingressClassName: traefik-external
+      annotations:
+        external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
+      hosts:
+        - host: dash.${SECRET_DOMAIN}
+          paths:
+            - path: /
+      tls:
+        - hosts:
+            - dash.${SECRET_DOMAIN}
