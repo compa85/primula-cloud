@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: bentopdf
-          image: ghcr.io/alam00000/bentopdf:v2.8.8
+          image: ghcr.io/alam00000/bentopdf:v2.8.12
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
