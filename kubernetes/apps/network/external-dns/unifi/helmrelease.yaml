@@ -37,6 +37,9 @@ spec:
               secretKeyRef:
                 name: external-dns-unifi-secret
                 key: api-key
+          # answer 500 within external-dns 15s budget instead of making it exit
+          - name: UNIFI_REQUEST_TIMEOUT
+            value: 4s
         livenessProbe:
           httpGet:
             path: /healthz
