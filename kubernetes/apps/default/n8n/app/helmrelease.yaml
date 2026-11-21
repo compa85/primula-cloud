@@ -23,13 +23,22 @@ spec:
       config:
         n8n:
           editor_base_url: "https://n8n.${SECRET_DOMAIN}"
+          webhook_url: "https://n8n.${SECRET_DOMAIN}"
+          # the "n8n" Service injects N8N_PORT=tcp://... via service links
+          port: 5678
+          # pin current defaults before n8n changes them
+          unverified_packages_enabled: true
+          runners:
+            task_timeout: 300
+          compression:
+            node_max_decompressed_size_bytes: "2147483648"
+            node_max_zip_entries: 5000
           email:
             mode: smtp
           smtp:
             sender: "n8n <noreply@${SECRET_DOMAIN}>"
             ssl: false
             starttls: true
-        webhook_url: "https://n8n.${SECRET_DOMAIN}"
         generic:
           timezone: "${TIMEZONE}"
         tz: "${TIMEZONE}"
