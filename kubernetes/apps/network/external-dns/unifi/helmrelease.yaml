@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: external-dns
-      version: 1.21.1
+      version: 1.24.0
       sourceRef:
         kind: HelmRepository
         name: external-dns-unifi
@@ -53,7 +53,10 @@ spec:
           initialDelaySeconds: 10
           timeoutSeconds: 5
     extraArgs:
+      - --dry-run
       - --annotation-filter=external-dns.alpha.kubernetes.io/exclude-unifi notin (true)
+    # v0.22+ defaults to external-dns.kubernetes.io/, our annotations use alpha
+    annotationPrefix: external-dns.alpha.kubernetes.io/
     triggerLoopOnEvent: true
     policy: sync
     sources:
