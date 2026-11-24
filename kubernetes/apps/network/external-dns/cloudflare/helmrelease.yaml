@@ -34,9 +34,6 @@ spec:
       - --crd-source-kind=DNSEndpoint
       - --ignore-ingress-tls-spec
       - --ingress-class=traefik-external
-      # temporary: split horizon migration
-      - --enable-legacy-annotation-prefix
-      - --migrate-from-txt-owner=default
     triggerLoopOnEvent: true
     policy: sync
     sources:
