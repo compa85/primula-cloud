@@ -54,7 +54,6 @@ spec:
           timeoutSeconds: 5
     extraArgs:
       # temporary: split horizon migration
-      - --dry-run
       - --migrate-from-txt-owner=default
     annotationPrefix: internal-dns.${SECRET_DOMAIN}/
     triggerLoopOnEvent: true

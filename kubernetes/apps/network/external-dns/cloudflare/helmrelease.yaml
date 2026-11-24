@@ -35,7 +35,6 @@ spec:
       - --ignore-ingress-tls-spec
       - --ingress-class=traefik-external
       # temporary: split horizon migration
-      - --dry-run
       - --enable-legacy-annotation-prefix
       - --migrate-from-txt-owner=default
     triggerLoopOnEvent: true
