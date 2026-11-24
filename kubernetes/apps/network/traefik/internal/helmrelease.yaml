@@ -32,7 +32,7 @@ spec:
       spec:
         type: LoadBalancer
       annotations:
-        external-dns.alpha.kubernetes.io/hostname: "internal.${SECRET_DOMAIN}"
+        internal-dns.${SECRET_DOMAIN}/hostname: "internal.${SECRET_DOMAIN}"
         lbipam.cilium.io/ips: 10.10.25.10
     ingressClass:
       enabled: true
@@ -81,5 +81,3 @@ spec:
         enabled: true
         ingressClass: traefik-internal
         allowExternalNameServices: true
-        publishedService:
-          enabled: false
