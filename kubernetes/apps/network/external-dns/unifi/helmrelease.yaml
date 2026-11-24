@@ -53,16 +53,17 @@ spec:
           initialDelaySeconds: 10
           timeoutSeconds: 5
     extraArgs:
-      - --annotation-filter=external-dns.alpha.kubernetes.io/exclude-unifi notin (true)
-    # v0.22+ defaults to external-dns.kubernetes.io/, our annotations use alpha
-    annotationPrefix: external-dns.alpha.kubernetes.io/
+      # temporary: split horizon migration
+      - --dry-run
+      - --migrate-from-txt-owner=default
+    annotationPrefix: internal-dns.${SECRET_DOMAIN}/
     triggerLoopOnEvent: true
     policy: sync
     sources:
       - crd
       - ingress
-      - traefik-proxy
-    txtOwnerId: default
+      - service
+    txtOwnerId: unifi
     txtPrefix: k8s.prod.%{record_type}-
     domainFilters:
       - ${SECRET_DOMAIN}

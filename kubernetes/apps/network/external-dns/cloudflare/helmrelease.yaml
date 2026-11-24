@@ -34,15 +34,16 @@ spec:
       - --crd-source-kind=DNSEndpoint
       - --ignore-ingress-tls-spec
       - --ingress-class=traefik-external
-    # v0.22+ defaults to external-dns.kubernetes.io/, our annotations use alpha
-    annotationPrefix: external-dns.alpha.kubernetes.io/
+      # temporary: split horizon migration
+      - --dry-run
+      - --enable-legacy-annotation-prefix
+      - --migrate-from-txt-owner=default
     triggerLoopOnEvent: true
     policy: sync
     sources:
       - crd
       - ingress
-      - traefik-proxy
-    txtOwnerId: default
+    txtOwnerId: cloudflare
     txtPrefix: k8s.prod.%{record_type}-
     domainFilters:
       - ${SECRET_DOMAIN}
